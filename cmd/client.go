@@ -67,6 +67,7 @@ to quickly create a Cobra application.`,
 			return
 		}
 		aliveChecking := time.After(30 * time.Second)
+		var lastId int64
 	loop:
 		for {
 			select {
@@ -81,14 +82,21 @@ to quickly create a Cobra application.`,
 				if taskid == 0 {
 					log.Info("server shutdown")
 					for {
-						time.Sleep(time.Second * 10)
-						log.Info("try reconnect sever every 10s ")
-						task, err = cli.WorkerQueue(cmd.Context(), td, taskid)
-						if err == nil {
-							goto loop
+						select {
+						case sig := <-sigCh:
+							log.Infof("signal %s captured", sig)
+							break loop
+						default:
+							time.Sleep(time.Second * 10)
+							log.Info("try reconnect sever every 10s ")
+							task, err = cli.WorkerQueue(cmd.Context(), td, lastId)
+							if err == nil {
+								goto loop
+							}
 						}
 					}
 				}
+				lastId = taskid
 				log.Infof("receive new task %v from server", taskid)
 				go func() {
 					time.Sleep(time.Second * 5)
