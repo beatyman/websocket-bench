@@ -33,7 +33,7 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		cli,closer,err:=client.NewCommonRPCV0(cmd.Context(),"127.0.0.1:3500",http.Header{})
+		cli,closer,err:=client.NewCommonRPCV0(cmd.Context(),"127.0.0.1:3500/rpc/v0",http.Header{})
 		if err!=nil{
 			log.Error(err)
 		}

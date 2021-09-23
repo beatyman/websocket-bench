@@ -2,6 +2,7 @@ package impl
 
 import (
 	"context"
+	log "github.com/sirupsen/logrus"
 	"reflect"
 	"time"
 	"websocket-bench/api"
@@ -11,6 +12,7 @@ type CommonAPI struct {
 	//some other
 }
 func (n *CommonAPI) GetTime(context.Context) (time.Time, error) {
+	log.Info("GetTime")
 	return time.Now(),nil
 }
 

@@ -8,10 +8,6 @@ import (
 
 var ErrNotSupported = xerrors.New("method not supported")
 
-type Handler interface {
-	GetTime(context.Context) (time.Time, error)
-}
-
 type Common interface {
 	GetTime(context.Context) (time.Time, error)
 }
