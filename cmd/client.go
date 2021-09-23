@@ -78,6 +78,17 @@ to quickly create a Cobra application.`,
 			case <-cmd.Context().Done():
 				break loop
 			case taskid := <-task:
+				if taskid == 0 {
+					log.Info("server shutdown")
+					for {
+						time.Sleep(time.Second * 10)
+						log.Info("try reconnect sever every 10s ")
+						task, err = cli.WorkerQueue(cmd.Context(), td)
+						if err == nil {
+							goto loop
+						}
+					}
+				}
 				log.Infof("receive new task %v from server", taskid)
 				go func() {
 					time.Sleep(time.Second * 5)
