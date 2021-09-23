@@ -22,6 +22,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 	"websocket-bench/client"
 )
 
@@ -58,11 +59,24 @@ to quickly create a Cobra application.`,
 		}
 		log.Info(td)
 		sigCh := make(chan os.Signal, 2)
-
 		signal.Notify(sigCh, syscall.SIGTERM, syscall.SIGINT)
+	loop:
+		task, err := cli.WorkerQueue(cmd.Context(), td)
+		if err != nil {
+			log.Error(err)
+			goto loop
+		}
 		select {
 		case <-cmd.Context().Done():
-
+		case <-task:
+			log.Info("receive from server")
+			go func() {
+				time.Sleep(time.Second * 5)
+				err := cli.WorkerDone(cmd.Context(), td)
+				if err != nil {
+					log.Error(err)
+				}
+			}()
 		case sig := <-sigCh:
 			log.Infof("signal %s captured", sig)
 		}
