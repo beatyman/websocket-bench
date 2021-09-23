@@ -9,7 +9,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
+	"websocket-bench/impl"
 )
 
 func ServeRPC(ctx context.Context, listen string, maxRequestSize int64) error {
@@ -19,7 +19,7 @@ func ServeRPC(ctx context.Context, listen string, maxRequestSize int64) error {
 	}
 
 	rpcServer := jsonrpc.NewServer(rpcOpts...)
-	rpcServer.Register("Filecoin", impl{})
+	rpcServer.Register("Filecoin", impl.NewCommonAPI(&impl.CommonAPI{}))
 
 	http.Handle("/rpc/v0", rpcServer)
 
@@ -56,15 +56,4 @@ func ServeRPC(ctx context.Context, listen string, maxRequestSize int64) error {
 
 	log.Info("gracefull down")
 	return nil
-}
-
-type Handler interface {
-	GetTime(context.Context) (time.Time, error)
-}
-
-type impl struct {
-}
-
-func (pl *impl) GetTime(context.Context) (time.Time, error) {
-	return time.Now(), nil
 }
