@@ -36,6 +36,7 @@ to quickly create a Cobra application.`,
 		cli,closer,err:=client.NewCommonRPCV0(cmd.Context(),"wss://127.0.0.1:3500/rpc/v0",http.Header{})
 		if err!=nil{
 			log.Error(err)
+			return
 		}
 		defer closer()
 		td,err:=cli.GetTime(cmd.Context())
