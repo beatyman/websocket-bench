@@ -50,7 +50,7 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	serverCmd.Flags().String("listen-addr", "addr", "websocket server address,like: 127.0.0.1:3500")
+	serverCmd.Flags().String("listen-addr", "127.0.0.1:3500", "websocket server address")
 	rootCmd.AddCommand(serverCmd)
 
 	// Here you will define your flags and configuration settings.
