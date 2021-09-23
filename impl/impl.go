@@ -14,20 +14,19 @@ func (n *CommonAPI) GetSession(context.Context) (uuid.UUID, error) {
 	return uuid.New(), nil
 }
 
-func (n *CommonAPI) WorkerQueue(ctx context.Context, id interface{}) (<-chan interface{}, error) {
-	queue := make(chan interface{})
+func (n *CommonAPI) WorkerQueue(ctx context.Context, workerId uuid.UUID) (<-chan int64, error) {
+	queue := make(chan int64)
 	worker := &worker{
 		sealTasks: queue,
+		ID:        workerId,
 	}
 	go worker.run(ctx)
-	workerId, _ := id.(uuid.UUID)
 	log.Info("new client connect to server ", workerId)
 	return queue, nil
 }
 
-func (n *CommonAPI) WorkerDone(ctx context.Context, id interface{}) error {
-	workerId, _ := id.(uuid.UUID)
-	log.Info("client worker done a task ", workerId)
+func (n *CommonAPI) WorkerDone(ctx context.Context, workerId uuid.UUID, taskid int64) error {
+	log.Infof("client worker %v done a task : %v", workerId, taskid)
 	return nil
 }
 

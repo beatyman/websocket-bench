@@ -11,9 +11,9 @@ var ErrNotSupported = xerrors.New("method not supported")
 type Common interface {
 	GetSession(context.Context) (uuid.UUID, error)
 	//测试长连接
-	WorkerQueue(context.Context, interface{}) (<-chan interface{}, error)
+	WorkerQueue(context.Context, uuid.UUID) (<-chan int64, error)
 	//测试任务提交
-	WorkerDone(context.Context, interface{}) error
+	WorkerDone(context.Context, uuid.UUID, int64) error
 
 	Version(context.Context) (string, error)
 }
@@ -21,8 +21,8 @@ type Common interface {
 type CommonStruct struct {
 	Internal struct {
 		GetSession  func(context.Context) (uuid.UUID, error)
-		WorkerQueue func(context.Context, interface{}) (<-chan interface{}, error)
-		WorkerDone  func(context.Context, interface{}) error
+		WorkerQueue func(context.Context, uuid.UUID) (<-chan int64, error)
+		WorkerDone  func(context.Context, uuid.UUID, int64) error
 		Version     func(context.Context) (string, error)
 	}
 }
@@ -33,17 +33,17 @@ func (s *CommonStruct) GetSession(ctx context.Context) (uuid.UUID, error) {
 	}
 	return s.Internal.GetSession(ctx)
 }
-func (s *CommonStruct) WorkerQueue(p0 context.Context, p1 interface{}) (<-chan interface{}, error) {
+func (s *CommonStruct) WorkerQueue(p0 context.Context, p1 uuid.UUID) (<-chan int64, error) {
 	if s.Internal.WorkerQueue == nil {
 		return nil, ErrNotSupported
 	}
 	return s.Internal.WorkerQueue(p0, p1)
 }
-func (s *CommonStruct) WorkerDone(p0 context.Context, p1 interface{}) error {
+func (s *CommonStruct) WorkerDone(p0 context.Context, p1 uuid.UUID, p3 int64) error {
 	if s.Internal.WorkerDone == nil {
 		return ErrNotSupported
 	}
-	return s.Internal.WorkerDone(p0, p1)
+	return s.Internal.WorkerDone(p0, p1, p3)
 }
 func (s *CommonStruct) Version(p0 context.Context) (string, error) {
 	if s.Internal.Version == nil {

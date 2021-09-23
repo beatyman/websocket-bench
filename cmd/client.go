@@ -77,11 +77,11 @@ to quickly create a Cobra application.`,
 				}
 			case <-cmd.Context().Done():
 				break loop
-			case <-task:
+			case taskid := <-task:
 				log.Info("receive from server")
 				go func() {
 					time.Sleep(time.Second * 5)
-					err := cli.WorkerDone(cmd.Context(), td)
+					err := cli.WorkerDone(cmd.Context(), td, taskid)
 					if err != nil {
 						log.Error(err)
 					}
