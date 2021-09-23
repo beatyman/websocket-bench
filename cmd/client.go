@@ -73,7 +73,7 @@ to quickly create a Cobra application.`,
 			case <-aliveChecking:
 				version, err := cli.Version(cmd.Context())
 				if version == "" || err != nil {
-					log.Info("disconnection from server")
+					log.Info("disconnection from server: ", td)
 				}
 			case <-cmd.Context().Done():
 				break loop
@@ -91,7 +91,7 @@ to quickly create a Cobra application.`,
 				break loop
 			}
 		}
-		log.Info("gracefull down")
+		log.Info("gracefull down ", td)
 	},
 }
 
