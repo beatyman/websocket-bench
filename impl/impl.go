@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
-	"time"
 )
 
 type CommonAPI struct {
@@ -16,19 +15,11 @@ func (n *CommonAPI) GetSession(context.Context) (uuid.UUID, error) {
 }
 
 func (n *CommonAPI) WorkerQueue(ctx context.Context, cli interface{}) (<-chan interface{}, error) {
-	ticker := time.NewTicker(time.Minute)
 	queue := make(chan interface{})
-	go func() {
-		for {
-			select {
-			case <-ticker.C:
-				queue <- "ping from server"
-			case <-ctx.Done():
-				log.Warn("client exit : ")
-			}
-
-		}
-	}()
+	worker := &worker{
+		sealTasks: queue,
+	}
+	go worker.run(ctx)
 	return queue, nil
 }
 
