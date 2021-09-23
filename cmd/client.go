@@ -52,7 +52,7 @@ to quickly create a Cobra application.`,
 			return
 		}
 		defer closer()
-		td, err := cli.GetTime(cmd.Context())
+		td, err := cli.GetSession(cmd.Context())
 		if err != nil {
 			log.Error(err)
 		}
