@@ -38,18 +38,11 @@ to quickly create a Cobra application.`,
 			log.Error(err)
 		}
 		defer closer()
-		for  {
-			select {
-			case <-cmd.Context().Done():
-				return
-			default:
-				td,err:=cli.GetTime(cmd.Context())
-				if err!=nil{
-					log.Error(err)
-				}
-				log.Info(td)
-			}
+		td,err:=cli.GetTime(cmd.Context())
+		if err!=nil{
+			log.Error(err)
 		}
+		log.Info(td)
 	},
 }
 
