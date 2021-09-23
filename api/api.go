@@ -30,5 +30,6 @@ func (s *CommonStruct) GetTime(ctx context.Context) (time.Time, error) {
 }
 
 func (s *CommonStub) GetTime(context.Context) (time.Time, error) {
+	log.Errorf("CommonStub: %+v", ErrNotSupported)
 	return *new(time.Time), ErrNotSupported
 }
