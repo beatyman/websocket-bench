@@ -16,9 +16,9 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"os"
 	"websocket-bench/server"
 )
 
@@ -32,15 +32,25 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
+	Args: cobra.MinimumNArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("server called")
-		if err := server.ServeRPC(cmd.Context(), ":3500", 1024*1024); err != nil {
+		addr, err := cmd.Flags().GetString("listen-addr")
+		if err != nil {
+			log.Error(err)
+			os.Exit(1)
+		}
+		if addr == "" {
+			log.Error("server listen addr is null")
+			return
+		}
+		if err := server.ServeRPC(cmd.Context(), addr, 1024*1024); err != nil {
 			log.Error(err)
 		}
 	},
 }
 
 func init() {
+	serverCmd.Flags().String("listen-addr", "addr", "websocket server address,like: 127.0.0.1:3500")
 	rootCmd.AddCommand(serverCmd)
 
 	// Here you will define your flags and configuration settings.

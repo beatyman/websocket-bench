@@ -37,7 +37,15 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Args: cobra.MinimumNArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
-		addr, err := cmd.Flags().GetString("server-url")
+		addr, err := cmd.Flags().GetString("server-addr")
+		if err != nil {
+			log.Error(err)
+			os.Exit(1)
+		}
+		if addr == "" {
+			log.Error("server  addr is null")
+			return
+		}
 		cli, closer, err := client.NewCommonRPCV0(cmd.Context(), addr, http.Header{})
 		if err != nil {
 			log.Error(err)
@@ -63,7 +71,7 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	clientCmd.Flags().String("server-url", "addr", "websocket server address,like: ws://127.0.0.1:3500/rpc/v0")
+	clientCmd.Flags().String("server-addr", "addr", "websocket server address,like: ws://127.0.0.1:3500/rpc/v0")
 	rootCmd.AddCommand(clientCmd)
 
 	// Here you will define your flags and configuration settings.
