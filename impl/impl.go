@@ -11,7 +11,7 @@ import (
 type CommonAPI struct {
 	//some other
 }
-func (n *CommonAPI) GetTime(context.Context) (time.Time, error) {
+func (n *CommonAPI) GetTime(ctx context.Context) (time.Time, error)  {
 	log.Info("GetTime")
 	return time.Now(),nil
 }
@@ -40,5 +40,6 @@ func proxy(in interface{}, outstr interface{}) {
 func NewCommonAPI(a api.Common) api.Common {
 	var out api.CommonStruct
 	proxy(a, &out)
+	log.Infof("%+v",out)
 	return &out
 }
