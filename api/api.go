@@ -14,6 +14,8 @@ type Common interface {
 	WorkerQueue(context.Context, interface{}) (<-chan interface{}, error)
 	//测试任务提交
 	WorkerDone(context.Context, interface{}) error
+
+	Version(context.Context) (string, error)
 }
 
 type CommonStruct struct {
@@ -21,6 +23,7 @@ type CommonStruct struct {
 		GetSession  func(context.Context) (uuid.UUID, error)
 		WorkerQueue func(context.Context, interface{}) (<-chan interface{}, error)
 		WorkerDone  func(context.Context, interface{}) error
+		Version     func(context.Context) (string, error)
 	}
 }
 
@@ -41,4 +44,10 @@ func (s *CommonStruct) WorkerDone(p0 context.Context, p1 interface{}) error {
 		return ErrNotSupported
 	}
 	return s.Internal.WorkerDone(p0, p1)
+}
+func (s *CommonStruct) Version(p0 context.Context) (string, error) {
+	if s.Internal.Version == nil {
+		return "", ErrNotSupported
+	}
+	return s.Internal.Version(p0)
 }

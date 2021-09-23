@@ -66,9 +66,15 @@ to quickly create a Cobra application.`,
 			log.Error(err)
 			return
 		}
+		aliveChecking := time.After(30 * time.Second)
 	loop:
 		for {
 			select {
+			case <-aliveChecking:
+				version, err := cli.Version(cmd.Context())
+				if version == "" || err != nil {
+					log.Info("disconnection from server")
+				}
 			case <-cmd.Context().Done():
 				break loop
 			case <-task:
@@ -82,6 +88,7 @@ to quickly create a Cobra application.`,
 				}()
 			case sig := <-sigCh:
 				log.Infof("signal %s captured", sig)
+				break loop
 			}
 		}
 		log.Info("gracefull down")

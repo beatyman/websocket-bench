@@ -20,10 +20,15 @@ func (n *CommonAPI) WorkerQueue(ctx context.Context, cli interface{}) (<-chan in
 		sealTasks: queue,
 	}
 	go worker.run(ctx)
+	log.Info("new client connect to server ")
 	return queue, nil
 }
 
 func (n *CommonAPI) WorkerDone(context.Context, interface{}) error {
 	log.Info("client worker done ")
 	return nil
+}
+
+func (n *CommonAPI) Version(context.Context) (string, error) {
+	return "v1.11.0", nil
 }
