@@ -14,7 +14,7 @@ type worker struct {
 }
 
 func (w *worker) run(ctx context.Context) {
-	ticker := time.NewTicker(time.Minute)
+	ticker := time.NewTicker(time.Second * 30)
 	go func() {
 		for {
 			select {
