@@ -16,7 +16,7 @@ func (n *CommonAPI) GetSession(context.Context) (uuid.UUID, error) {
 }
 
 func (n *CommonAPI) WorkerQueue(ctx context.Context, cli interface{}) (<-chan interface{}, error) {
-	ticker := time.NewTicker(time.Second * 5)
+	ticker := time.NewTicker(time.Minute)
 	queue := make(chan interface{})
 	go func() {
 		for {
