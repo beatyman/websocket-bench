@@ -40,6 +40,5 @@ func proxy(in interface{}, outstr interface{}) {
 func NewCommonAPI(a api.Common) api.Common {
 	var out api.CommonStruct
 	proxy(a, &out)
-	log.Infof("%+v",out)
 	return &out
 }
