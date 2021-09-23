@@ -16,7 +16,7 @@ func (n *CommonAPI) GetSession(context.Context) (uuid.UUID, error) {
 
 func (n *CommonAPI) WorkerQueue(ctx context.Context, workerId uuid.UUID, last int64) (<-chan int64, error) {
 	if last != 0 {
-		log.Infof(" client  %v reconnect to server")
+		log.Infof(" client  %v reconnect to server", workerId)
 	} else {
 		log.Info("new client connect to server ", workerId)
 	}
