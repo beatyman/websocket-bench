@@ -14,14 +14,19 @@ func (n *CommonAPI) GetSession(context.Context) (uuid.UUID, error) {
 	return uuid.New(), nil
 }
 
-func (n *CommonAPI) WorkerQueue(ctx context.Context, workerId uuid.UUID) (<-chan int64, error) {
+func (n *CommonAPI) WorkerQueue(ctx context.Context, workerId uuid.UUID, last int64) (<-chan int64, error) {
+	if last != 0 {
+		log.Infof(" client  %v reconnect to server")
+	} else {
+		log.Info("new client connect to server ", workerId)
+	}
 	queue := make(chan int64)
 	worker := &worker{
 		sealTasks: queue,
 		ID:        workerId,
+		taskCount: last,
 	}
 	go worker.run(ctx)
-	log.Info("new client connect to server ", workerId)
 	return queue, nil
 }
 

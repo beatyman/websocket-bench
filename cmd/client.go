@@ -61,7 +61,7 @@ to quickly create a Cobra application.`,
 		log.Info(td)
 		sigCh := make(chan os.Signal, 2)
 		signal.Notify(sigCh, syscall.SIGTERM, syscall.SIGINT)
-		task, err := cli.WorkerQueue(cmd.Context(), td)
+		task, err := cli.WorkerQueue(cmd.Context(), td, 0)
 		if err != nil {
 			log.Error(err)
 			return
@@ -83,7 +83,7 @@ to quickly create a Cobra application.`,
 					for {
 						time.Sleep(time.Second * 10)
 						log.Info("try reconnect sever every 10s ")
-						task, err = cli.WorkerQueue(cmd.Context(), td)
+						task, err = cli.WorkerQueue(cmd.Context(), td, taskid)
 						if err == nil {
 							goto loop
 						}
