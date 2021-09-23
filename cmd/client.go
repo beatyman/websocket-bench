@@ -56,29 +56,33 @@ to quickly create a Cobra application.`,
 		td, err := cli.GetSession(cmd.Context())
 		if err != nil {
 			log.Error(err)
+			return
 		}
 		log.Info(td)
 		sigCh := make(chan os.Signal, 2)
 		signal.Notify(sigCh, syscall.SIGTERM, syscall.SIGINT)
-	loop:
 		task, err := cli.WorkerQueue(cmd.Context(), td)
 		if err != nil {
 			log.Error(err)
-			goto loop
+			return
 		}
-		select {
-		case <-cmd.Context().Done():
-		case <-task:
-			log.Info("receive from server")
-			go func() {
-				time.Sleep(time.Second * 5)
-				err := cli.WorkerDone(cmd.Context(), td)
-				if err != nil {
-					log.Error(err)
-				}
-			}()
-		case sig := <-sigCh:
-			log.Infof("signal %s captured", sig)
+	loop:
+		for {
+			select {
+			case <-cmd.Context().Done():
+				break loop
+			case <-task:
+				log.Info("receive from server")
+				go func() {
+					time.Sleep(time.Second * 5)
+					err := cli.WorkerDone(cmd.Context(), td)
+					if err != nil {
+						log.Error(err)
+					}
+				}()
+			case sig := <-sigCh:
+				log.Infof("signal %s captured", sig)
+			}
 		}
 		log.Info("gracefull down")
 	},

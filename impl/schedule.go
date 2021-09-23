@@ -19,8 +19,8 @@ func (w *worker) run(ctx context.Context) {
 				w.sealTasks <- "ping from server"
 			case <-ctx.Done():
 				log.Warn("client exit : ")
+				return
 			}
-
 		}
 	}()
 }
