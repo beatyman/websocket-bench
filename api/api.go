@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	log "github.com/sirupsen/logrus"
 	"golang.org/x/xerrors"
 	"time"
 )
@@ -23,13 +22,11 @@ type CommonStub struct {
 
 func (s *CommonStruct) GetTime(ctx context.Context) (time.Time, error) {
 	if s.Internal.GetTime == nil {
-		log.Error(ErrNotSupported)
 		return *new(time.Time), ErrNotSupported
 	}
 	return s.Internal.GetTime(ctx)
 }
 
 func (s *CommonStub) GetTime(context.Context) (time.Time, error) {
-	log.Errorf("CommonStub: %+v", ErrNotSupported)
 	return *new(time.Time), ErrNotSupported
 }

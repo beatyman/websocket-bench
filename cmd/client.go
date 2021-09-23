@@ -19,6 +19,9 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 	"websocket-bench/client"
 )
 
@@ -32,22 +35,35 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
+	Args: cobra.MinimumNArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
-		cli,closer,err:=client.NewCommonRPCV0(cmd.Context(),"ws://127.0.0.1:3500/rpc/v0",http.Header{})
-		if err!=nil{
+		addr, err := cmd.Flags().GetString("server-url")
+		cli, closer, err := client.NewCommonRPCV0(cmd.Context(), addr, http.Header{})
+		if err != nil {
 			log.Error(err)
 			return
 		}
 		defer closer()
-		td,err:=cli.GetTime(cmd.Context())
-		if err!=nil{
+		td, err := cli.GetTime(cmd.Context())
+		if err != nil {
 			log.Error(err)
 		}
 		log.Info(td)
+		sigCh := make(chan os.Signal, 2)
+
+		signal.Notify(sigCh, syscall.SIGTERM, syscall.SIGINT)
+		select {
+		case <-cmd.Context().Done():
+
+		case sig := <-sigCh:
+			log.Infof("signal %s captured", sig)
+		}
+		log.Info("gracefull down")
 	},
 }
 
 func init() {
+	clientCmd.Flags().String("server-url", "addr", "websocket server address,like: ws://127.0.0.1:3500/rpc/v0")
 	rootCmd.AddCommand(clientCmd)
 
 	// Here you will define your flags and configuration settings.
